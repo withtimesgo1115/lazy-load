@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Lazyload</title>
+    <style>
+      .image-item {
+	    display: block;
+	    margin-bottom: 50px;
+	    height: 200px;
+	}
+    </style>
+</head>
+<body>
+    <img src="" class="image-item" lazyload="true"  data-original="images/1.png"/>
+    <img src="" class="image-item" lazyload="true"  data-original="images/2.jpg"/>
+    <img src="" class="image-item" lazyload="true"  data-original="images/3.gif"/>
+    <img src="" class="image-item" lazyload="true"  data-original="images/4.jpg"/>
+    <img src="" class="image-item" lazyload="true"  data-original="images/5.jpg"/>
+    <img src="" class="image-item" lazyload="true"  data-original="images/6.webp"/>
+    <img src="" class="image-item" lazyload="true"  data-original="images/7.jpg"/>
+    <img src="" class="image-item" lazyload="true"  data-original="images/8.jpg"/>
+    <img src="" class="image-item" lazyload="true"  data-original="images/9.jpg"/>
+    <img src="" class="image-item" lazyload="true"  data-original="images/10.jpg"/>
+
+    <script>
+        var viewHeight = window.innerHeight || documentElement.clientHeight //获取可视区高度
+        
+        function lazyload(){
+            var eles = document.querySelectorAll('img[data-original][lazyload]');
+            Array.prototype.forEach.call(eles, function(item,index){
+                var rect;
+                rect = item.getBoundingClientRect() // 用于获得页面中某个元素的左，上，右和下分别相对浏览器视窗的位置
+                if(rect.bottom >= 0 && rect.top < viewHeight){
+                    (function(){
+                        var img = new Image()
+                        img.src = item.dataset.original;
+                        img.onload = function(){
+                            item.src = img.src;
+                        }
+                        item.removeAttribute("data-original"); //移除属性，下次不再遍历
+                        item.removeAttribute("lazyload");
+                    })()
+                }
+                else if(item.src === "") return;
+            })
+        }
+        
+        lazyload() //刚开始还没滚动屏幕时，要先触发一次函数，初始化首页的页面图片
+        document.addEventListener("scroll", lazyload)
+    </script>
+</body>
+</html>
